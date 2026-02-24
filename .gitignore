@@ -1,3 +1,11 @@
+
+bin
+build
+
+#========================================
+# Defaults from github C++ .gitignore option
+#========================================
+
 # Prerequisites
 *.d
 
