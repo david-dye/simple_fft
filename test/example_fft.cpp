@@ -26,8 +26,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    bool should_reverse_bits = true;
-    fft(x.data(), n_data, should_reverse_bits);
+    fft(x.data(), n_data);
 
     std::cout << "Post-FFT:\n";
     for (uint64_t i = 0; i < n_data; ++i) {
@@ -35,7 +34,7 @@ int main() {
     }
     std::cout << std::endl;
 
-    ifft(x.data(), n_data, should_reverse_bits);
+    ifft(x.data(), n_data);
     std::cout << "Post-IFFT:\n";
     for (uint64_t i = 0; i < n_data; ++i) {
         std::cout << x[i].real() << ", " << x[i].imag() << ", ";
