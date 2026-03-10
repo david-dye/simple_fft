@@ -1,6 +1,9 @@
 # Compiler
 CXX := g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -O2 -I./src
+CXXFLAGS := -std=c++20 -Wall -Wextra -O3 -I./src -I/usr/local/include
+
+# Linker flags
+LDFLAGS := -L/usr/local/lib -lfftw3f_threads -lfftw3f -lm
 
 # Directories
 SRC_DIR := src
@@ -26,7 +29,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 # Build each test executable and link with all object files
 $(BIN_DIR)/%: $(TEST_DIR)/%.cpp $(OBJ_FILES)
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $< $(OBJ_FILES) -o $@
+	$(CXX) $(CXXFLAGS) $< $(OBJ_FILES) -o $@ $(LDFLAGS)
 
 clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR)

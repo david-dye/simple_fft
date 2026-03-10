@@ -1,7 +1,6 @@
 #include <cstdint>
 #include <vector>
 #include <complex>
-#include <fftw3.h>
 
 class Convolver {
 public:
@@ -9,8 +8,6 @@ public:
 
     Convolver();
     ~Convolver();
-
-    void plan_convolution(uint64_t n_z1, uint64_t n_z2);
 
     std::vector<Complex_T>& convolve(
         const Complex_T* const z1,
@@ -21,16 +18,10 @@ public:
 
 private:
 
-    uint64_t planned_size = 0;
+    
 
-    fftwf_complex* in1 = nullptr;
-    fftwf_complex* in2 = nullptr;
-    fftwf_complex* freq1 = nullptr;
-    fftwf_complex* freq2 = nullptr;
-
-    fftwf_plan plan_fwd_1 = nullptr;
-    fftwf_plan plan_fwd_2 = nullptr;
-    fftwf_plan plan_inv = nullptr;
-
+    std::vector<Complex_T> conv_in_1;
+    std::vector<Complex_T> conv_in_2;
     std::vector<Complex_T> conv_out;
+
 };
