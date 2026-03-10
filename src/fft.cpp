@@ -13,7 +13,7 @@ constexpr std::array<std::complex<float>, MAX_STAGES> make_twiddles(const int fa
     std::array<std::complex<float>, MAX_STAGES> table{};
 
     for (std::size_t i = 1; i <= MAX_STAGES; ++i) {
-        float angle = factor * std::numbers::pi_v<float> / (1ULL << (i - 1));
+        float angle = factor * F_PI / (1ULL << (i - 1));
         table[i - 1] = {
             std::cos(angle),
             std::sin(angle)
