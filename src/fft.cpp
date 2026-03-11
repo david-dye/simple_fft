@@ -62,17 +62,61 @@ bool fft(
 
     uint8_t n_data_log2 = ui_log2_ui64(n_data);
     
+    // for (uint8_t i = n_data_log2; i >= 1; --i) {
+    //     uint64_t half_stride = UINT64_C(1) << (i - 1);
+    //     std::complex<float> twiddle = TWIDDLES_NEG[i - 1];
+    //     for (uint64_t j = 0; j < n_data; j += 2 * half_stride) {
+    //         std::complex<float> exp_term = std::complex<float>(1.f, 0.f);
+    //         for (uint64_t k = 0; k < half_stride; ++k) {
+    //             std::complex<float> u = data[j + k];
+    //             std::complex<float> t = data[j + k + half_stride];
+    //             data[j + k] = u + t;
+    //             data[j + k + half_stride] = exp_term * (u - t);
+    //             exp_term *= twiddle;
+    //         }
+    //     }
+    // }
+
     for (uint8_t i = n_data_log2; i >= 1; --i) {
+
         uint64_t half_stride = UINT64_C(1) << (i - 1);
-        std::complex<float> twiddle = TWIDDLES_NEG[i - 1];
+
+        float tw_r = TWIDDLES_NEG[i - 1].real();
+        float tw_i = TWIDDLES_NEG[i - 1].imag();
+
         for (uint64_t j = 0; j < n_data; j += 2 * half_stride) {
-            std::complex<float> exp_term = std::complex<float>(1.f, 0.f);
+
+            std::complex<float>* a = data + j;
+            std::complex<float>* b = data + j + half_stride;
+
+            float exp_r = 1.f;
+            float exp_i = 0.f;
+
             for (uint64_t k = 0; k < half_stride; ++k) {
-                std::complex<float> u = data[j + k];
-                std::complex<float> t = data[j + k + half_stride];
-                data[j + k] = u + t;
-                data[j + k + half_stride] = exp_term * (u - t);
-                exp_term *= twiddle;
+
+                float ur = a[k].real();
+                float ui = a[k].imag();
+
+                float tr = b[k].real();
+                float ti = b[k].imag();
+
+                float xr = ur + tr;
+                float xi = ui + ti;
+
+                float yr = ur - tr;
+                float yi = ui - ti;
+
+                a[k].real(xr);
+                a[k].imag(xi);
+
+                b[k].real(exp_r*yr - exp_i*yi);
+                b[k].imag(exp_r*yi + exp_i*yr);
+
+                float new_er = exp_r*tw_r - exp_i*tw_i;
+                float new_ei = exp_r*tw_i + exp_i*tw_r;
+
+                exp_r = new_er;
+                exp_i = new_ei;
             }
         }
     }
@@ -120,17 +164,64 @@ bool ifft(
         }
     }
     
+    // for (uint8_t i = 1; i <= n_data_log2; ++i) {
+    //     uint64_t half_stride = UINT64_C(1) << (i - 1);
+    //     std::complex<float> twiddle = TWIDDLES_POS[i - 1];
+    //     for (uint64_t j = 0; j < n_data; j += 2 * half_stride) {
+    //         std::complex<float> exp_term = std::complex<float>(1.f, 0.f);
+    //         for (uint64_t k = 0; k < half_stride; ++k) {
+    //             std::complex<float> u = data[j + k];
+    //             std::complex<float> t = exp_term * data[j + k + half_stride];
+    //             data[j + k] = u + t;
+    //             data[j + k + half_stride] = u - t;
+    //             exp_term *= twiddle;
+    //         }
+    //     }
+    // }
+
     for (uint8_t i = 1; i <= n_data_log2; ++i) {
+
         uint64_t half_stride = UINT64_C(1) << (i - 1);
-        std::complex<float> twiddle = TWIDDLES_POS[i - 1];
+
+        float tw_r = TWIDDLES_POS[i - 1].real();
+        float tw_i = TWIDDLES_POS[i - 1].imag();
+
         for (uint64_t j = 0; j < n_data; j += 2 * half_stride) {
-            std::complex<float> exp_term = std::complex<float>(1.f, 0.f);
+
+            std::complex<float>* a = data + j;
+            std::complex<float>* b = data + j + half_stride;
+
+            float exp_r = 1.f;
+            float exp_i = 0.f;
+
             for (uint64_t k = 0; k < half_stride; ++k) {
-                std::complex<float> u = data[j + k];
-                std::complex<float> t = exp_term * data[j + k + half_stride];
-                data[j + k] = u + t;
-                data[j + k + half_stride] = u - t;
-                exp_term *= twiddle;
+
+                float ur = a[k].real();
+                float ui = a[k].imag();
+
+                float br = b[k].real();
+                float bi = b[k].imag();
+
+                float tr = exp_r * br - exp_i * bi;
+                float ti = exp_r * bi + exp_i * br;
+
+                float xr = ur + tr;
+                float xi = ui + ti;
+
+                float yr = ur - tr;
+                float yi = ui - ti;
+
+                a[k].real(xr);
+                a[k].imag(xi);
+
+                b[k].real(yr);
+                b[k].imag(yi);
+
+                float new_er = exp_r * tw_r - exp_i * tw_i;
+                float new_ei = exp_r * tw_i + exp_i * tw_r;
+
+                exp_r = new_er;
+                exp_i = new_ei;
             }
         }
     }
