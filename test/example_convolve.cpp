@@ -11,20 +11,21 @@
 // #define PRINT_DEBUG
 
 int main() {
-    uint64_t n_data = 100000;
+    uint64_t n_data1 = 100000;
+    uint64_t n_data2 = 1000;
 
     std::mt19937 gen(0);
     std::uniform_int_distribution<uint32_t> rand_u32(0, std::numeric_limits<uint32_t>::max());
     
-    std::vector<std::complex<float>> z1(n_data);
-    for (uint64_t i = 0; i < n_data; ++i) {
+    std::vector<std::complex<float>> z1(n_data1);
+    for (uint64_t i = 0; i < n_data1; ++i) {
         float re = static_cast<float>(rand_u32(gen)) / std::numeric_limits<uint32_t>::max();
         float im = static_cast<float>(rand_u32(gen)) / std::numeric_limits<uint32_t>::max();
         z1[i] = std::complex<float>(re, im);
     }
 
-    std::vector<std::complex<float>> z2(n_data);
-    for (uint64_t i = 0; i < n_data; ++i) {
+    std::vector<std::complex<float>> z2(n_data2);
+    for (uint64_t i = 0; i < n_data2; ++i) {
         float re = static_cast<float>(rand_u32(gen)) / std::numeric_limits<uint32_t>::max();
         float im = static_cast<float>(rand_u32(gen)) / std::numeric_limits<uint32_t>::max();
         z2[i] = std::complex<float>(re, im);
@@ -32,7 +33,7 @@ int main() {
 
 #ifdef PRINT_DEBUG
     std::cout << "z1:\n";
-    for (uint64_t i = 0; i < n_data; ++i) {
+    for (uint64_t i = 0; i < n_data1; ++i) {
         std::cout << z1[i].real() << ", " << z1[i].imag() << ", ";
     }
     std::cout << std::endl;
@@ -40,7 +41,7 @@ int main() {
 
 #ifdef PRINT_DEBUG
     std::cout << "z2:\n";
-    for (uint64_t i = 0; i < n_data; ++i) {
+    for (uint64_t i = 0; i < n_data2; ++i) {
         std::cout << z2[i].real() << ", " << z2[i].imag() << ", ";
     }
     std::cout << std::endl;
